@@ -7,7 +7,7 @@ const connection = async () => {
         return global.connection;
     }
     const con = await mysql2.createConnection({
-        host: 'localhost',
+        host: '192.168.4.132',
         port: '3306',
         database: 'clinica',
         user: 'root',

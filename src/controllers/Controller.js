@@ -1,7 +1,5 @@
 
-const filmeModel = require('../models/FilmeModel')
-
-
+const clienteModel = require('../models/ClienteModel')
 
 const clienteController = {
 
@@ -21,10 +19,10 @@ const clienteController = {
         try {
             const { titulo, ano } = req.body;
             console.log(titulo, ano);
-            const result = await filmeModel.insertFilme({ titulo: titulo, ano: ano });
+            const result = await clienteModel.insertFilme({ titulo: titulo, ano: ano });
             console.log(result);
 
-            const filmes = await filmeModel.listar_db();
+            const filmes = await clienteModel.listar_db();
 
 
             if (result[0].affectedRows > 0) {
@@ -54,7 +52,7 @@ const clienteController = {
     // Retorna todos os filmes cadastrados na tabela
     listar: async (req, res) => {
         try {
-            const filmes = await filmeModel.listar_db();
+            const filmes = await clienteModel.listar_db();
             // return res.json(filmes);
             return res.render('pages/listar', { filmes, success: false });
 
@@ -70,7 +68,7 @@ const clienteController = {
             const { id } = req.params;
             // const { titulo, ano } = req.body;
             // console.log(id, titulo, ano);
-            const result = await filmeModel.selecionaPorId(id);
+            const result = await clienteModel.selecionaPorId(id);
             // console.log(result);
             // const clientes = await clienteModel.selecionaTodosClientes();
             return res.render('pages/editar', { data: result });
@@ -88,10 +86,10 @@ const clienteController = {
             // const { id } = req.params;
             const { id, titulo, ano } = req.body;
             console.log(id, titulo, ano);
-            const result = await filmeModel.updateFilme(id, { titulo: titulo, ano: ano });
+            const result = await clienteModel.updateFilme(id, { titulo: titulo, ano: ano });
             console.log(result);
             // const clientes = await clienteModel.selecionaTodosClientes();
-            const filmes = await filmeModel.listar_db();
+            const filmes = await clienteModel.listar_db();
             // return res.json(filmes);
             return res.render('pages/listar', { filmes });
         } catch (error) {
@@ -105,7 +103,7 @@ const clienteController = {
         try {
             const { id } = req.params;
             // return res.json(await deleteCliente(id),{ message: `Registro deletado com sucesso!` });
-            var result = await filmeModel.deleteFilme(id);
+            var result = await clienteModel.deleteFilme(id);
             console.log(result);
             if (result[0].affectedRows > 0) {
                 return res.json({ message: `Registro excluído com sucesso!`, success: true })
