@@ -2,7 +2,7 @@
 
 // Import do framework Express
 const express = require("express");
-const router = require('./src/routes/Route');
+const router = require('./src/routes');
 const expressLayouts = require('express-ejs-layouts');
 
 const app = express();

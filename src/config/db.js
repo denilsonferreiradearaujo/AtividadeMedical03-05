@@ -1,7 +1,7 @@
 const mysql2 = require("mysql2/promise");
 
 // BANCO DE DADOS
-const connection =  {
+const connection = async () => {
 
     // if (global.connection && global.connection.state !== 'disconnected') {
     //     return global.connection;

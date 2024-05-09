@@ -40,7 +40,7 @@ const modelCliente = {
         }
     },
     // INSERE UM NOVO REGISTRO NA TABELA CADASTRO;
-    insertFilme: async (filme) => {
+    insertCliente: async (cliente) => {
         try {
             const conn = await connection();
             const sql = 'INSERT INTO tbl_cadastro(titulo,ano) VALUES (?,?);';

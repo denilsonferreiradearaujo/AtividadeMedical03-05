@@ -1,4 +1,3 @@
-
 const clienteModel = require('../models/ClienteModel')
 
 const clienteController = {
@@ -17,9 +16,8 @@ const clienteController = {
     // CREATE - CRIA UM NOVO CLIENTE
     adicionarCliente: async (req, res) => {
         try {
-            const { titulo, ano } = req.body;
-            console.log(titulo, ano);
-            const result = await clienteModel.insertFilme({ titulo: titulo, ano: ano });
+            const { cpf, nome, data_nasc, genero, email, endereco_id } = req.body;
+            const result = await clienteModel.insertCliente({ cpf: cpf, nome: nome, data_nasc: data_nasc, genero: genero, email: email, endereco_id: endereco_id });
             console.log(result);
 
             const filmes = await clienteModel.listar_db();
@@ -121,14 +119,14 @@ const clienteController = {
 };
 
 const verificaErro = (err) => {
-    if (err.code === 'ECONNREFUSED'){
-        let error_message ='Conexão com o servidor de banco de dados indisponível!';
+    if (err.code === 'ECONNREFUSED') {
+        let error_message = 'Conexão com o servidor de banco de dados indisponível!';
         res.render('pages/pag_erro', { message: error_message });
-    } 
+    }
     else {
         console.log('Ocorreu um erro ao processar sua solicitação!');
-            let error_message = 'Ocorreu um erro ao processar sua solicitação!';
-            res.render('pages/pag_erro', { message: error_message });
+        let error_message = 'Ocorreu um erro ao processar sua solicitação!';
+        res.render('pages/pag_erro', { message: error_message });
     }
 }
 
