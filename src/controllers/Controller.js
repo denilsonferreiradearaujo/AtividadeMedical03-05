@@ -14,8 +14,8 @@ const clienteController = {
             res.render('pages/pag_erro', { message: error_message });
         }
     },
-    // CREATE - CRIA UM NOVO FILME
-    adicionarFilme: async (req, res) => {
+    // CREATE - CRIA UM NOVO CLIENTE
+    adicionarCliente: async (req, res) => {
         try {
             const { titulo, ano } = req.body;
             console.log(titulo, ano);
