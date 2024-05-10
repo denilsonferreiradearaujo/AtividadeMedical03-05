@@ -1,4 +1,4 @@
-const clienteModel = require('../models/ClienteModel')
+const clienteModel = require('../models/clienteModel')
 
 const clienteController = {
 
@@ -20,7 +20,7 @@ const clienteController = {
             const result = await clienteModel.insertCliente({ cpf: cpf, nome: nome, data_nasc: data_nasc, genero: genero, email: email, endereco_id: endereco_id });
             console.log(result);
 
-            const filmes = await clienteModel.listar_db();
+            const listaClientes = await clienteModel.listar_db();
 
 
             if (result[0].affectedRows > 0) {
@@ -36,6 +36,7 @@ const clienteController = {
             res.render('pages/pag_erro', { message: error_message });
         }
     },
+
     // Retorna a página de cadastro de filmes
     cadastro: (req, res) => {
         try {

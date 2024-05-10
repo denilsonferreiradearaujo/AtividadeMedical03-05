@@ -2,17 +2,31 @@ const {connection} = require(`../config/db`);
 
 const modelCliente = {
 
+    // INSERE UM NOVO REGISTRO NA TABELA CADASTRO;
+    insertCliente: async (cliente) => {
+        try {
+            const conn = await connection();
+            const sql = 'INSERT INTO tbl_pessoa(cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?,?,?,?,?,?);';
+            const values = [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, cliente.endereco_id];
+            return await conn.query(sql, values);
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
     // SELECIONA TODOS OS REGISTROS DA TABELA CADASTRO;
     listar_db: async () => {
         try {            
             const conn = await connection();
-            const [rows] = await conn.query('select * from tbl_cadastro;');
+            const [rows] = await conn.query('select * from tbl_pessoa;');
             return rows;
 
         } catch (error) {
             throw error;
         }
     },
+
     // SELECIONA O REGISTRO DESEJADO NA TABELA CADASTRO;
     selecionaPorId: async (id) => {
         try {
@@ -34,18 +48,6 @@ const modelCliente = {
             const values = `${id}`;
             const [rows] = await conn.query(sql, values);
             return rows;
-
-        } catch (error) {
-            throw error;
-        }
-    },
-    // INSERE UM NOVO REGISTRO NA TABELA CADASTRO;
-    insertCliente: async (cliente) => {
-        try {
-            const conn = await connection();
-            const sql = 'INSERT INTO tbl_cadastro(titulo,ano) VALUES (?,?);';
-            const values = [filme.titulo, filme.ano];
-            return await conn.query(sql, values);
 
         } catch (error) {
             throw error;
