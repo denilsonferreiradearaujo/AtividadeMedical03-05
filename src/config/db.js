@@ -8,7 +8,7 @@ const connection = async () => {
     // }
 
     const con = await mysql2.createConnection({
-        host: '192.168.60.165',
+        host: '192.168.4.102',
         port: '3306',
         database: 'clinica',
         user: 'root',

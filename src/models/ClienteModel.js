@@ -1,81 +1,49 @@
-const {connection} = require(`../config/db`);
+const conectarBancoDeDados = require('../config/db');
 
-const modelCliente = {
+async function insert(cliente, endereco, telefone) {
+    const connection = await conectarBancoDeDados();
+    try {
+        /**
+         * beginTransaction() inicia a transação.
+         * commit() confirma a transação, aplicando todas as alterações feitas durante a transação.
+         * rollback() reverte a transação, descartando todas as alterações feitas durante a transação.
+         */
+        await connection.beginTransaction();
+        
+        // Insere os endereços fazendo uma leitura dos objetos contidos no array
+        const resEnd = await connection.query('INSERT INTO tbl_endereco (logradouro, bairro, estado, numero, complemento, cep) VALUES (?,?,?,?,?,?)', [endereco.logradouro, endereco.bairro, endereco.estado, endereco.numero, endereco.complemento, endereco.cep]);
+      
 
-    // INSERE UM NOVO REGISTRO NA TABELA CADASTRO;
-    insertCliente: async (cliente) => {
-        try {
-            const conn = await connection();
-            const sql = 'INSERT INTO tbl_pessoa(cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?,?,?,?,?,?);';
-            const values = [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, cliente.endereco_id];
-            return await conn.query(sql, values);
+        // Insere o cliente, a variável 'res' nos informa qual é o id do cliente para realizar os 'inserts' de endereços e telefones que contém chave estrangeira (FK)
+        const res = await connection.query('INSERT INTO tbl_pessoa (null, cpf, nome, data_nasc, genero, email) VALUES (null, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc]);
+        console.log('RESULTADO INSERT CLIENTE =>', res);
 
-        } catch (error) {
-            throw error;
-        }
-    },
+        // console.log(telefone, endereco);
+        // Insere os telefones fazendo uma leitura dos objetos contidos no array
+        telefone.forEach(async (tel) => {
+            await connection.query('INSERT INTO telefone (id_cliente, tipo, numero) VALUES (?, ?, ?)', [res[0].insertId, tel.tipo, tel.numero]);
+        });
 
-    // SELECIONA TODOS OS REGISTROS DA TABELA CADASTRO;
-    listar_db: async () => {
-        try {            
-            const conn = await connection();
-            const [rows] = await conn.query('select * from tbl_pessoa;');
-            return rows;
 
-        } catch (error) {
-            throw error;
-        }
-    },
+        //INSERT NA TABELA TBL_PESSOA_HAS_TBL_TELEFONE VINCULANDO OS ID'S, INDEPENDENTE DA QUANTIDADE DE TELEFONES POR CLIENTES.
+        endereco.forEach(async (telefone) => {
+            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)', [res[0].insertId, telefone.pessoa_id, telefone.telefone_id, telefone.pessoa_tbl_endereco_id]);
+        });
 
-    // SELECIONA O REGISTRO DESEJADO NA TABELA CADASTRO;
-    selecionaPorId: async (id) => {
-        try {
-            const conn = await connection();
-            const sql = 'SELECT * FROM tbl_cadastro WHERE id=?;';
-            const values = id;
-            const [rows] = await conn.query(sql, values);
-            return rows;
+        // Se todas as queries forem bem-sucedidas, um 'commit' é realizado para confirmar as execuções
+        await connection.commit();
+        console.log('Transação concluída com sucesso.');
+        return ('Transação concluída com sucesso.')
+    } catch (error) {
+        // Em caso de erro, um 'rollback' é realizado para cancelar as execuções que foram realizadas
+        await connection.rollback();
+        console.log(error);
+        return (error);
+    } finally {
+        // Fecha a conexão com o banco de dados
+        connection.end();
 
-        } catch (error) {
-            throw error;
-        }
-    },
-    // SELECIONA O REGISTRO DESEJADO NA TABELA CADASTRO POR NOME;
-    selectClienteNome: async (id) => {
-        try {
-            const conn = await connection();
-            const sql = `SELECT * FROM tbl_cadastro WHERE titulo=?;`;
-            const values = `${id}`;
-            const [rows] = await conn.query(sql, values);
-            return rows;
-
-        } catch (error) {
-            throw error;
-        }
-    },
-    // ATUALIZA UM REGISTRO DA TABELA CADASTRO;
-    updateFilme: async (id, filme) => {
-        try {
-            const conn = await connection();
-            const sql = 'UPDATE tbl_cadastro SET titulo=?, ano=? WHERE id=?';
-            const values = [filme.titulo, filme.ano, id];
-            return await conn.query(sql, values);
-
-        } catch (error) {
-            throw error;
-        }
-    },
-    // DELETA UM REGISTRO DA TABELA CADASTRO;
-    deleteFilme: async (id) => {
-        try {
-            const conn = await connection();
-            const sql = 'DELETE FROM tbl_cadastro where id=?;';
-            return await conn.query(sql, [id]);
-
-        } catch (error) {
-            throw error;
-        }
-    },
+    }
 }
 
-module.exports = modelCliente ;
+module.exports = { insert };

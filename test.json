@@ -1,0 +1,34 @@
+{   
+    "cpf": "",
+    "nome": "",
+    "data_nasc": "",
+    "genero": "",
+    "email": "",
+    
+    "endereco":[
+        {
+            "logradouro":"",
+            "bairro":"",
+            "estado": "",
+            "numero": "",
+            "complemento": "",
+            "cep": ""
+        }
+    ],
+    
+    "telefone":[
+        {
+            "numero":""
+        },
+        {
+            "numero":""
+        }
+    ],
+
+    "funcionario":[
+        {
+            "data_admissao":"",
+            "crm":""
+        }
+    ]
+}
