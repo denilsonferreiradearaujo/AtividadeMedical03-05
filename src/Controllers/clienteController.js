@@ -1,134 +1,58 @@
-const clienteModel = require('../models/clienteModel')
+const Pessoa = require('../models/Pessoa');
+const Endereco = require('../Models/Endereco');
+const Telefone = require('../Models/Telefone');
+const { insert } = require('../models/ClienteModel');
 
 const clienteController = {
 
     //Retorna a página inicial do projeto
-    index: (req, res) => {
-        try {
-            res.render('pages/index');
-        }
-        catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-    // CREATE - CRIA UM NOVO CLIENTE
+    // index: (req, res) => {
+    //     try {
+    //         res.render('pages/index');
+    //     }
+    //     catch (error) {
+    //         console.log(error);
+    //         let error_message = verificaErro(error);
+    //         res.render('pages/pag_erro', { message: error_message });
+    //     }
+    // },
+    // CREATE/INSERE - CRIA UM NOVO REGISTRO
     adicionarCliente: async (req, res) => {
         try {
-            const { cpf, nome, data_nasc, genero, email, endereco_id } = req.body;
-            const result = await clienteModel.insertCliente({ cpf: cpf, nome: nome, data_nasc: data_nasc, genero: genero, email: email, endereco_id: endereco_id });
-            console.log(result);
+            // Desestrutura os dados recebidos do corpo (body). Endereço e telefone podem ter mais de um, portanto podem ser fornecidos em formato de array de objetos [{}]
+            const { cpf, nome, data_nasc, genero, email, endereco: [logradouro, bairro, estado, numero, complemento, cep], telefone, funcionario } = req.body;
 
-            const listaClientes = await clienteModel.listar_db();
-
-
-            if (result[0].affectedRows > 0) {
-                return res.render('pages/listar', { filmes: filmes, message: `Registro incluído com sucesso!`, success: true });
-            } else {
-                return res.render('pages/listar', { filmes: filmes, message: `Registro não incluído, tente novamente!`, success: true });
+            // Cria o objeto cliente de acordo com a classe endereço
+            const objPessoa = new Pessoa({nome, dt_nasc, cpf});
+            
+            // Cria uma variável do tipo array que deve receber um ou mais objetos do tipo 'Endereço' ou 'Telefone' 
+            const objTelefone = [];
+            // Realiza a leitura da variável 'telefone', originada na desestruturação, criando os objetos de acordo com a classe.
+            if (telefone.length > 0) {
+                telefone.forEach(value => {
+                    objTelefone.push(new Telefone(value));
+                });
             }
 
+            // Realiza a leitura da variável 'endereço', originada na desestruturação, criando os objetos de acordo com a classe.
+            const objEndereco = new Endereco({ logradouro, bairro, estado, numero, complemento, cep });
+
+            
+            //
+            // const sqlCliente = await Cliente.create();:
+            // Aciona a função insert da modelCliente
+            const result = await insert(objPessoa, objEndereco, objTelefone);
+
+            // executeSQLQueryParams(sql, params);
+            return res.json(result);
 
         } catch (error) {
             console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-
-    // Retorna a página de cadastro de filmes
-    cadastro: (req, res) => {
-        try {
-            res.render('pages/cadastro');
-        }
-        catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-    // Retorna todos os filmes cadastrados na tabela
-    listar: async (req, res) => {
-        try {
-            const filmes = await clienteModel.listar_db();
-            // return res.json(filmes);
-            return res.render('pages/listar', { filmes, success: false });
-
-        } catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-    // Retorna a página de edição já com o item a ser editado
-    editar: async (req, res) => {
-        try {
-            const { id } = req.params;
-            // const { titulo, ano } = req.body;
-            // console.log(id, titulo, ano);
-            const result = await clienteModel.selecionaPorId(id);
-            // console.log(result);
-            // const clientes = await clienteModel.selecionaTodosClientes();
-            return res.render('pages/editar', { data: result });
-
-        } catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-    // Salva a edição do item 
-    salvarEdicao: async (req, res) => {
-        try {
-            // console.log('testeeeeeeee');
-            // const { id } = req.params;
-            const { id, titulo, ano } = req.body;
-            console.log(id, titulo, ano);
-            const result = await clienteModel.updateFilme(id, { titulo: titulo, ano: ano });
-            console.log(result);
-            // const clientes = await clienteModel.selecionaTodosClientes();
-            const filmes = await clienteModel.listar_db();
-            // return res.json(filmes);
-            return res.render('pages/listar', { filmes });
-        } catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
-        }
-    },
-    // Deletar um item
-    deletarFilme: async (req, res) => {
-        try {
-            const { id } = req.params;
-            // return res.json(await deleteCliente(id),{ message: `Registro deletado com sucesso!` });
-            var result = await clienteModel.deleteFilme(id);
-            console.log(result);
-            if (result[0].affectedRows > 0) {
-                return res.json({ message: `Registro excluído com sucesso!`, success: true })
-            } else {
-                return res.json({ message: `Registro não localizado!`, success: true });
-            }
-
-        } catch (error) {
-            console.log(error);
-            let error_message = verificaErro(error);
-            res.render('pages/pag_erro', { message: error_message });
+            // let error_message = verificaErro(error);
+            res.json(error);
         }
     },
 
 };
-
-const verificaErro = (err) => {
-    if (err.code === 'ECONNREFUSED') {
-        let error_message = 'Conexão com o servidor de banco de dados indisponível!';
-        res.render('pages/pag_erro', { message: error_message });
-    }
-    else {
-        console.log('Ocorreu um erro ao processar sua solicitação!');
-        let error_message = 'Ocorreu um erro ao processar sua solicitação!';
-        res.render('pages/pag_erro', { message: error_message });
-    }
-}
 
 module.exports = clienteController
