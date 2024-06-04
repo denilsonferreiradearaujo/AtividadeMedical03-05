@@ -9,40 +9,48 @@ async function insert(cliente, endereco, telefone) {
          * rollback() reverte a transação, descartando todas as alterações feitas durante a transação.
          */
         await connection.beginTransaction();
-        
+
         // Insere os endereços fazendo uma leitura dos objetos contidos no array
         const resEnd = await connection.query('INSERT INTO tbl_endereco (logradouro, bairro, estado, numero, complemento, cep) VALUES (?,?,?,?,?,?)', [endereco.logradouro, endereco.bairro, endereco.estado, endereco.numero, endereco.complemento, endereco.cep]);
-      
+console.log(resEnd);
+        // Obtém o ID do endereço inserido
+        const enderecoId = resEnd[0].insertId;
 
-        // Insere o cliente, a variável 'res' nos informa qual é o id do cliente para realizar os 'inserts' de endereços e telefones que contém chave estrangeira (FK)
-        const res = await connection.query('INSERT INTO tbl_pessoa (null, cpf, nome, data_nasc, genero, email) VALUES (null, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc]);
-        console.log('RESULTADO INSERT CLIENTE =>', res);
+        // Insere o cliente com o endereco_id
+        const resPessoa = await connection.query('INSERT INTO tbl_pessoa (cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, enderecoId]);
+        console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
+
+        // Restante do código...
 
         // console.log(telefone, endereco);
         // Insere os telefones fazendo uma leitura dos objetos contidos no array
+        const idsTel = [];
+        
         telefone.forEach(async (tel) => {
-            await connection.query('INSERT INTO telefone (id_cliente, tipo, numero) VALUES (?, ?, ?)', [res[0].insertId, tel.tipo, tel.numero]);
+            console.log(`RESULTADO DO OBJETO`,tel);
+            const resTel =  await connection.query('INSERT INTO tbl_telefone (numero) VALUES (?)', [tel.numero]);
+            console.log(`RESULTADO DO RESTEL =>`, resTel);
+            idsTel.push(resTel[0].insertId);
         });
-
-
+        console.log(idsTel);
         //INSERT NA TABELA TBL_PESSOA_HAS_TBL_TELEFONE VINCULANDO OS ID'S, INDEPENDENTE DA QUANTIDADE DE TELEFONES POR CLIENTES.
-        endereco.forEach(async (telefone) => {
-            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)', [res[0].insertId, telefone.pessoa_id, telefone.telefone_id, telefone.pessoa_tbl_endereco_id]);
+        idsTel.forEach(async (idTel) => {
+            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)',
+             [resPessoa[0].insertId, idTel, enderecoId]);
         });
 
         // Se todas as queries forem bem-sucedidas, um 'commit' é realizado para confirmar as execuções
         await connection.commit();
         console.log('Transação concluída com sucesso.');
-        return ('Transação concluída com sucesso.')
+        return 'Transação concluída com sucesso.';
     } catch (error) {
         // Em caso de erro, um 'rollback' é realizado para cancelar as execuções que foram realizadas
         await connection.rollback();
         console.log(error);
-        return (error);
+        return error;
     } finally {
         // Fecha a conexão com o banco de dados
         connection.end();
-
     }
 }
 

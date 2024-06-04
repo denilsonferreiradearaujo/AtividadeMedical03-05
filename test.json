@@ -1,27 +1,27 @@
 {   
-    "cpf": "",
-    "nome": "",
-    "data_nasc": "",
-    "genero": "",
-    "email": "",
+    "cpf": "47098253863",
+    "nome": "Gabriel Pantalhão",
+    "data_nasc": "13/12/2003",
+    "genero": "Masculino",
+    "email": "pantalhaog@gmail.com",
     
     "endereco":[
         {
-            "logradouro":"",
-            "bairro":"",
-            "estado": "",
-            "numero": "",
-            "complemento": "",
-            "cep": ""
+            "logradouro":"Rua Eutanásia floripa",
+            "bairro":"Suburbo",
+            "estado": "SP",
+            "numero": "345",
+            "complemento": "Perto a algum lugar",
+            "cep": "13199362"
         }
     ],
     
     "telefone":[
         {
-            "numero":""
+            "numero":"19988565031"
         },
         {
-            "numero":""
+            "numero":"19988565031"
         }
     ],
 
