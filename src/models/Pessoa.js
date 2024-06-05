@@ -29,15 +29,9 @@ class Pessoa {
 
 
     DataConvert(value) {
-        let [dia, mes, ano] = value.split('/'); //       19/01/2002
+        let [dia, mes, ano] = value.split('/'); 
         let dataFormatada = `${ano}-${mes}-${dia}`;
         this.Data_nasc = dataFormatada;
-        // console.log(this.Data_nasc);
-    }
-    create() {
-        const sql = 'INSERT INTO endereco (id_cliente, logradouro, numero, bairro, complemento, cep, cidade, uf) VALUES (?,?,?,?,?,?,?,?)';
-        const params = [];
-        // executeSQLQueryParams(sql, params);
     }
 }
 
