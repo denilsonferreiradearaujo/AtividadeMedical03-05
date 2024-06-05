@@ -148,24 +148,24 @@ async function remove(cpf) {
     try {
         await connection.beginTransaction();
 
-        const [rows] = await connection.query('SELECT id, endereco_id FROM tbl_pessoa WHERE cpf = ?', [cpf]);
+        // Selecionar o endereço_id com base no CPF
+        const [rows] = await connection.query('SELECT endereco_id FROM tbl_pessoa WHERE cpf = ?', [cpf]);
         if (rows.length === 0) {
             throw new Error('Cliente não encontrado!');
         }
-        const pessoaId = rows[0].id;
         const enderecoId = rows[0].endereco_id;
 
-        // Deletar registros da tabela tbl_pessoa_has_tbl_telefone
-        await connection.query('DELETE FROM tbl_pessoa_has_tbl_telefone WHERE pessoa_id = ?', [pessoaId]);
-        
-        // Deletar registros da tabela tbl_telefone
-        await connection.query('DELETE FROM tbl_telefone WHERE id IN (SELECT telefone_id FROM tbl_pessoa_has_tbl_telefone WHERE pessoa_id = ?)', [pessoaId]);
-        
-        // Deletar registro da tabela tbl_pessoa
-        await connection.query('DELETE FROM tbl_pessoa WHERE id = ?', [pessoaId]);
+        // Selecionar os IDs dos telefones associados à pessoa
+        const [telefones] = await connection.query('SELECT t.id FROM tbl_telefone t JOIN tbl_pessoa_has_tbl_telefone pt ON t.id = pt.telefone_id JOIN tbl_pessoa p ON pt.pessoa_id = p.id WHERE p.cpf = ?', [cpf]);
+        const telefoneIds = telefones.map(tel => tel.id);
 
-        // Deletar registro da tabela tbl_endereco
+        // Deletar o registro da tabela tbl_endereco (a exclusão em cascata cuidará do restante)
         await connection.query('DELETE FROM tbl_endereco WHERE id = ?', [enderecoId]);
+
+        // Deletar os registros da tabela tbl_telefone
+        if (telefoneIds.length > 0) {
+            await connection.query('DELETE FROM tbl_telefone WHERE id IN (?)', [telefoneIds]);
+        }
 
         await connection.commit();
         console.log('Remoção concluída com sucesso.');
