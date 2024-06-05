@@ -3,55 +3,180 @@ const conectarBancoDeDados = require('../config/db');
 async function insert(cliente, endereco, telefone) {
     const connection = await conectarBancoDeDados();
     try {
-        /**
-         * beginTransaction() inicia a transação.
-         * commit() confirma a transação, aplicando todas as alterações feitas durante a transação.
-         * rollback() reverte a transação, descartando todas as alterações feitas durante a transação.
-         */
         await connection.beginTransaction();
 
-        // Insere os endereços fazendo uma leitura dos objetos contidos no array
+        const [rows] = await connection.query('SELECT COUNT(*) AS count FROM tbl_pessoa WHERE cpf = ?', [cliente.cpf]);
+        if (rows[0].count > 0) {
+            throw new Error('Já existe um CPF registrado!');
+        }
+
         const resEnd = await connection.query('INSERT INTO tbl_endereco (logradouro, bairro, estado, numero, complemento, cep) VALUES (?,?,?,?,?,?)', [endereco.logradouro, endereco.bairro, endereco.estado, endereco.numero, endereco.complemento, endereco.cep]);
-console.log(resEnd);
-        // Obtém o ID do endereço inserido
+        console.log(resEnd);
+
         const enderecoId = resEnd[0].insertId;
 
-        // Insere o cliente com o endereco_id
         const resPessoa = await connection.query('INSERT INTO tbl_pessoa (cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, enderecoId]);
         console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
 
-        // Restante do código...
-
-        // console.log(telefone, endereco);
-        // Insere os telefones fazendo uma leitura dos objetos contidos no array
         const idsTel = [];
-        
-        telefone.forEach(async (tel) => {
-            console.log(`RESULTADO DO OBJETO`,tel);
-            const resTel =  await connection.query('INSERT INTO tbl_telefone (numero) VALUES (?)', [tel.numero]);
-            console.log(`RESULTADO DO RESTEL =>`, resTel);
-            idsTel.push(resTel[0].insertId);
-        });
-        console.log(idsTel);
-        //INSERT NA TABELA TBL_PESSOA_HAS_TBL_TELEFONE VINCULANDO OS ID'S, INDEPENDENTE DA QUANTIDADE DE TELEFONES POR CLIENTES.
-        idsTel.forEach(async (idTel) => {
-            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)',
-             [resPessoa[0].insertId, idTel, enderecoId]);
-        });
 
-        // Se todas as queries forem bem-sucedidas, um 'commit' é realizado para confirmar as execuções
+        for (const tel of telefone) {
+            const resTel = await connection.query('INSERT INTO tbl_telefone (numero) VALUES (?)', [tel.numero]);
+            idsTel.push(resTel[0].insertId);
+        }
+
+        for (const idTel of idsTel) {
+            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)',
+                [resPessoa[0].insertId, idTel, enderecoId]);
+            console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, resPessoa[0].insertId);
+        }
+
         await connection.commit();
         console.log('Transação concluída com sucesso.');
         return 'Transação concluída com sucesso.';
     } catch (error) {
-        // Em caso de erro, um 'rollback' é realizado para cancelar as execuções que foram realizadas
         await connection.rollback();
-        console.log(error);
-        return error;
+        console.log(error.message);
+        return error.message;
     } finally {
-        // Fecha a conexão com o banco de dados
         connection.end();
     }
 }
 
-module.exports = { insert };
+
+
+async function update(cliente, endereco, telefone) {
+    const connection = await conectarBancoDeDados();
+    try {
+        await connection.beginTransaction();
+
+        const [rows] = await connection.query('SELECT COUNT(*) AS count FROM tbl_pessoa WHERE cpf = ?', [cliente.cpf]);
+        if (rows[0].count === 0) {
+            throw new Error('Cliente não encontrado!');
+        }
+
+        const resEnd = await connection.query(
+            'UPDATE tbl_endereco SET logradouro = ?, bairro = ?, estado = ?, numero = ?, complemento = ?, cep = ? WHERE id = (SELECT endereco_id FROM tbl_pessoa WHERE cpf = ?)',
+            [endereco.logradouro, endereco.bairro, endereco.estado, endereco.numero, endereco.complemento, endereco.cep, cliente.cpf]
+        );
+
+        const resPessoa = await connection.query(
+            'UPDATE tbl_pessoa SET nome = ?, data_nasc = ?, genero = ?, email = ? WHERE cpf = ?',
+            [cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, cliente.cpf]
+        );
+
+        await connection.query(
+            'DELETE FROM tbl_pessoa_has_tbl_telefone WHERE pessoa_id = (SELECT id FROM tbl_pessoa WHERE cpf = ?)',
+            [cliente.cpf]
+        );
+
+        // const idsTel = [];
+        // for (const tel of telefone) {
+        //     const resTel = await connection.query('INSERT INTO tbl_telefone (numero) VALUES (?)', [tel.numero]);
+        //     idsTel.push(resTel[0].insertId);
+        // }
+
+        const pessoaId = (await connection.query('SELECT id FROM tbl_pessoa WHERE cpf = ?', [cliente.cpf]))[0][0].id;
+        const enderecoId = (await connection.query('SELECT endereco_id FROM tbl_pessoa WHERE cpf = ?', [cliente.cpf]))[0][0].endereco_id;
+
+        for (const idTel of idsTel) {
+            await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?, ?, ?)', [pessoaId, idTel, enderecoId]);
+        }
+
+        await connection.commit();
+        console.log('Atualização concluída com sucesso.');
+        return 'Atualização concluída com sucesso.';
+    } catch (error) {
+        await connection.rollback();
+        console.log(error.message);
+        return error.message;
+    } finally {
+        connection.end();
+    }
+}
+
+
+async function read() {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT p.cpf, p.nome, p.data_nasc, p.genero, p.email,
+                   e.logradouro, e.bairro, e.estado, e.numero, e.complemento, e.cep,
+                   GROUP_CONCAT(t.numero SEPARATOR ', ') AS telefones
+            FROM tbl_pessoa p
+            JOIN tbl_endereco e ON p.endereco_id = e.id
+            LEFT JOIN tbl_pessoa_has_tbl_telefone pt ON p.id = pt.pessoa_id
+            LEFT JOIN tbl_telefone t ON pt.telefone_id = t.id
+            GROUP BY p.cpf, p.nome, p.data_nasc, p.genero, p.email, e.logradouro, e.bairro, e.estado, e.numero, e.complemento, e.cep
+        `);
+        return rows;
+    } catch (error) {
+        console.log(error.message);
+        return error.message;
+    } finally {
+        connection.end();
+    }
+}
+async function buscarCpf(cpf) {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT p.cpf, p.nome, p.data_nasc, p.genero, p.email,
+                   e.logradouro, e.bairro, e.estado, e.numero, e.complemento, e.cep,
+                   GROUP_CONCAT(t.numero SEPARATOR ', ') AS telefones
+            FROM tbl_pessoa p
+            JOIN tbl_endereco e ON p.endereco_id = e.id
+            LEFT JOIN tbl_pessoa_has_tbl_telefone pt ON p.id = pt.pessoa_id
+            LEFT JOIN tbl_telefone t ON pt.telefone_id = t.id
+            WHERE p.cpf = ?
+            GROUP BY p.cpf, p.nome, p.data_nasc, p.genero, p.email, e.logradouro, e.bairro, e.estado, e.numero, e.complemento, e.cep
+        `, [cpf]);
+        if (rows.length === 0) {
+            throw new Error('Cliente não encontrado!');
+        }
+        return rows[0];
+    } catch (error) {
+        console.log(error.message);
+        return error.message;
+    } finally {
+        connection.end();
+    }
+}
+
+async function remove(cpf) {
+    const connection = await conectarBancoDeDados();
+    try {
+        await connection.beginTransaction();
+
+        const [rows] = await connection.query('SELECT id, endereco_id FROM tbl_pessoa WHERE cpf = ?', [cpf]);
+        if (rows.length === 0) {
+            throw new Error('Cliente não encontrado!');
+        }
+        const pessoaId = rows[0].id;
+        const enderecoId = rows[0].endereco_id;
+
+        // Deletar registros da tabela tbl_pessoa_has_tbl_telefone
+        await connection.query('DELETE FROM tbl_pessoa_has_tbl_telefone WHERE pessoa_id = ?', [pessoaId]);
+        
+        // Deletar registros da tabela tbl_telefone
+        await connection.query('DELETE FROM tbl_telefone WHERE id IN (SELECT telefone_id FROM tbl_pessoa_has_tbl_telefone WHERE pessoa_id = ?)', [pessoaId]);
+        
+        // Deletar registro da tabela tbl_pessoa
+        await connection.query('DELETE FROM tbl_pessoa WHERE id = ?', [pessoaId]);
+
+        // Deletar registro da tabela tbl_endereco
+        await connection.query('DELETE FROM tbl_endereco WHERE id = ?', [enderecoId]);
+
+        await connection.commit();
+        console.log('Remoção concluída com sucesso.');
+        return 'Remoção concluída com sucesso.';
+    } catch (error) {
+        await connection.rollback();
+        console.log(error.message);
+        return error.message;
+    } finally {
+        connection.end();
+    }
+}
+
+module.exports = { insert, update, read, buscarCpf, remove };
