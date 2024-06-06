@@ -1,9 +1,19 @@
-const Pessoa = require('../models/Pessoa');
-const Endereco = require('../models/Endereco');
-const Telefone = require('../models/Telefone');
-const Funcionario = require('../models/Funcionario');
-const { insert } = require('../models/ClienteModel');
-const { remove } = require('../models/ClienteModel');
+
+// Imports da classes
+const Consulta = require('../models/classes/Consulta');
+const Endereco = require('../models/classes/Endereco');
+const Especialidade = require('../models/classes/Especialidade');
+const Funcionario = require('../models/classes/Funcionario');
+const Login = require('../models/classes/Login');
+const Paciente = require('../models/classes/Paciente');
+const Perfis = require('../models/classes/Perfis');
+const Pessoa = require('../models/classes/Pessoa');
+const Prontuario = require('../models/classes/Prontuario');
+const Telefone = require('../models/classes/Telefone');
+
+// Import das funções das ClienteModel
+const { insert, remove } = require('../models/query/ClienteModel');
+
 
 const clienteController = {
     adicionarCliente: async (req, res) => {
