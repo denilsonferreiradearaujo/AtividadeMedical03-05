@@ -10,6 +10,7 @@ const Perfis = require('../models/classes/Perfis');
 const Pessoa = require('../models/classes/Pessoa');
 const Prontuario = require('../models/classes/Prontuario');
 const Telefone = require('../models/classes/Telefone');
+const Validacoes = require('../models/classes/Validacoes');
 
 // Import das funções das ClienteModel
 const { insert, remove } = require('../models/query/ClienteModel');
@@ -22,7 +23,25 @@ const clienteController = {
             const objPessoa = new Pessoa({ cpf, nome, data_nasc, genero, email });
             const objEndereco = new Endereco(endereco);            
             const objTelefones = telefone.map(tel => new Telefone(tel));
+            console.log(funcionario);
+          
             const objFuncionario = new Funcionario(funcionario);
+
+            console.log(objFuncionario);
+            if(objFuncionario.data_admissao === null || objFuncionario.data_admissao === "" ){
+                objFuncionario = null;
+               
+            } else {
+                if(objFuncionario.data_admissao == "Invalid Date" || !(objFuncionario.data_admissao) instanceof Date)  {
+                    console.log("Erro!");
+                    return res.json ("Data de admissão inválida!");
+                }
+            }
+
+            console.log(funcionario[0].data_admissao);
+            if(funcionario[0].data_admissao){
+                
+            }
             const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario);
             return res.json(result);
         } catch (error) {

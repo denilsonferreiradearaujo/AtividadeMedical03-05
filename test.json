@@ -1,5 +1,5 @@
 {   
-    "cpf": "47098253863",
+    "cpf": "470982535664",
     "nome": "Gabriel Pantalhão",
     "data_nasc": "13/12/2003",
     "genero": "Masculino",
@@ -27,7 +27,7 @@
 
     "funcionario":[
         {
-            "data_admissao":"",
+            "data_admissao":"21/10/1999",
             "crm":""
         }
     ]

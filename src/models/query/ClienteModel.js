@@ -1,6 +1,6 @@
 const conectarBancoDeDados = require('../../config/db');
 
-async function insert(cliente, endereco, telefone, perfil) {
+async function insert(cliente, endereco, telefone, funcionario) {
     const connection = await conectarBancoDeDados();
     try {
         await connection.beginTransaction();
@@ -11,16 +11,15 @@ async function insert(cliente, endereco, telefone, perfil) {
         }
 
         const resEnd = await connection.query('INSERT INTO tbl_endereco (logradouro, bairro, estado, numero, complemento, cep) VALUES (?,?,?,?,?,?)', [endereco.logradouro, endereco.bairro, endereco.estado, endereco.numero, endereco.complemento, endereco.cep]);
-        console.log(resEnd);
+        // console.log(resEnd);
 
         const enderecoId = resEnd[0].insertId;
 
         const resPessoa = await connection.query('INSERT INTO tbl_pessoa (cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, enderecoId]);
-        console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
+        // console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
 
-        // Adicionar automaticamente na tabela `tbl_paciente`
-        const resPaciente = await connection.query('INSERT INTO tbl_paciente (pessoa_id) VALUES (?)', [resPessoa[0].insertId]);
-        console.log('RESULTADO INSERT PACIENTE =>', resPaciente);
+
+
 
         const idsTel = [];
 
@@ -34,6 +33,15 @@ async function insert(cliente, endereco, telefone, perfil) {
                 [resPessoa[0].insertId, idTel, enderecoId]);
             console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, resPessoa[0].insertId);
         }
+
+        // Adicionar automaticamente na tabela `tbl_paciente`
+        await connection.query('INSERT INTO tbl_paciente (pessoa_id) VALUES (?)', [resPessoa[0].insertId]);
+        // console.log('RESULTADO INSERT PACIENTE =>', resPaciente);
+        if (funcionario !== null) {
+            await connection.query('INSERT INTO tbl_funcionario (data_admissao, crm, pessoa_id, pessoa_endereco_id) VALUES (?, ?, ?, ?)', [funcionario.data_admissao, funcionario.crm, resPessoa[0].insertId, enderecoId] )
+        }
+
+
 
         await connection.commit();
         console.log('Transação concluída com sucesso.');

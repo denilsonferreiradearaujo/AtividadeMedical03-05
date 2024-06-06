@@ -1,10 +1,12 @@
+const Validacoes = require('./Validacoes')
+
 class Pessoa {
 
     constructor(pCli) {
         this.id = (pCli.id !== null || pCli.id > 0) ? pCli.id : null;
         this.cpf = pCli.cpf;
         this.nome = pCli.nome;
-        this.DataConvert(pCli.data_nasc);
+        this.data_nasc = Validacoes.DataConvert(pCli.data_nasc);
         this.genero = pCli.genero;
         this.email = pCli.email;
         this.data_cad = (pCli.data_cad !== null || pCli.data_cad > 0) ? pCli.data_cad : null;
@@ -31,7 +33,8 @@ class Pessoa {
     DataConvert(value) {
         let [dia, mes, ano] = value.split('/'); 
         let dataFormatada = `${ano}-${mes}-${dia}`;
-        this.Data_nasc = dataFormatada;
+        this.Data_nasc = new Date(dataFormatada);
+        return this.Data_nasc;
     }
 }
 
