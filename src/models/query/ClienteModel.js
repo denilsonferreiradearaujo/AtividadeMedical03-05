@@ -1,6 +1,6 @@
 const conectarBancoDeDados = require('../../config/db');
 
-async function insert(cliente, endereco, telefone) {
+async function insert(cliente, endereco, telefone, perfil) {
     const connection = await conectarBancoDeDados();
     try {
         await connection.beginTransaction();
@@ -17,6 +17,10 @@ async function insert(cliente, endereco, telefone) {
 
         const resPessoa = await connection.query('INSERT INTO tbl_pessoa (cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, enderecoId]);
         console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
+
+        // Adicionar automaticamente na tabela `tbl_paciente`
+        const resPaciente = await connection.query('INSERT INTO tbl_paciente (pessoa_id) VALUES (?)', [resPessoa[0].insertId]);
+        console.log('RESULTADO INSERT PACIENTE =>', resPaciente);
 
         const idsTel = [];
 
