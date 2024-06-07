@@ -30,5 +30,19 @@
             "data_admissao":"21/10/1999",
             "crm":""
         }
+    ],
+
+    "login":[
+        {
+            "login": "nome@dominio.com",
+            "senha":"12345678",
+            "status": 1
+        }
+    ],
+
+    "perfil": [
+        {
+            "tipo": "Paciente"
+        }
     ]
 }

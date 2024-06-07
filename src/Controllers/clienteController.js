@@ -6,7 +6,7 @@ const Especialidade = require('../models/classes/Especialidade');
 const Funcionario = require('../models/classes/Funcionario');
 const Login = require('../models/classes/Login');
 const Paciente = require('../models/classes/Paciente');
-const Perfis = require('../models/classes/Perfis');
+const Perfil = require('../models/classes/Perfil');
 const Pessoa = require('../models/classes/Pessoa');
 const Prontuario = require('../models/classes/Prontuario');
 const Telefone = require('../models/classes/Telefone');
@@ -19,30 +19,24 @@ const { insert, remove } = require('../models/query/ClienteModel');
 const clienteController = {
     adicionarCliente: async (req, res) => {
         try {
-            const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario } = req.body;
+            const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil } = req.body;
             const objPessoa = new Pessoa({ cpf, nome, data_nasc, genero, email });
-            const objEndereco = new Endereco(endereco);            
+            const objLogin = new Login(login);
+            const objPerfil = new Perfil(perfil);
+            const objEndereco = new Endereco(endereco);
             const objTelefones = telefone.map(tel => new Telefone(tel));
-            console.log(funcionario);
-          
-            const objFuncionario = new Funcionario(funcionario);
-
+            // console.log(funcionario);
+            var objFuncionario = new Funcionario(funcionario);
             console.log(objFuncionario);
-            if(objFuncionario.data_admissao === null || objFuncionario.data_admissao === "" ){
+            if (funcionario[0].data_admissao === null || funcionario[0].data_admissao === "") {
                 objFuncionario = null;
-               
             } else {
-                if(objFuncionario.data_admissao == "Invalid Date" || !(objFuncionario.data_admissao) instanceof Date)  {
+                if (objFuncionario.data_admissao == "Invalid Date" || !(objFuncionario.data_admissao) instanceof Date) {
                     console.log("Erro!");
-                    return res.json ("Data de admissão inválida!");
+                    return res.json("Data de admissão inválida!");
                 }
             }
-
-            console.log(funcionario[0].data_admissao);
-            if(funcionario[0].data_admissao){
-                
-            }
-            const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario);
+            const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario, objLogin, objPerfil);
             return res.json(result);
         } catch (error) {
             console.log(error);

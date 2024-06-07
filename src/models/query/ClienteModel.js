@@ -1,6 +1,6 @@
 const conectarBancoDeDados = require('../../config/db');
 
-async function insert(cliente, endereco, telefone, funcionario) {
+async function insert(cliente, endereco, telefone, funcionario, login, perfil) {
     const connection = await conectarBancoDeDados();
     try {
         await connection.beginTransaction();
@@ -31,7 +31,7 @@ async function insert(cliente, endereco, telefone, funcionario) {
         for (const idTel of idsTel) {
             await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)',
                 [resPessoa[0].insertId, idTel, enderecoId]);
-            console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, resPessoa[0].insertId);
+            // console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, resPessoa[0].insertId);
         }
 
         // Adicionar automaticamente na tabela `tbl_paciente`
@@ -41,7 +41,7 @@ async function insert(cliente, endereco, telefone, funcionario) {
             await connection.query('INSERT INTO tbl_funcionario (data_admissao, crm, pessoa_id, pessoa_endereco_id) VALUES (?, ?, ?, ?)', [funcionario.data_admissao, funcionario.crm, resPessoa[0].insertId, enderecoId] )
         }
 
-
+        const resLogin = await connection.query('INSERT INTO tbl_login (login, senha, status, pessoa_id, pessoa_endereco_id) VALUES ( ?, ?, ?, ?, ?)', [login.login, login.senha, login.status, resPessoa[0].insertId, enderecoId])
 
         await connection.commit();
         console.log('Transação concluída com sucesso.');
