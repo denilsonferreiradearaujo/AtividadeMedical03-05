@@ -1,37 +1,32 @@
 <link rel="stylesheet" href="/css/menu.css">
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 80px;" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 80px;">
+
+    <div class="div-logo">
+        <a  href="/">
+            <img class="logo" src="../../../images/v987-18a.jpg">
+        </a>
+        
+    </div>
 
     <div class="container-fluid" style="width: 65%;">
-
-        <a class="navbar-brand" href="/">
-            <i class="fa-solid fa-photo-film"></i>
-            Home
-        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Modal de Login -->
                 <li class="nav-item">
-                    <a class="navbar-brand" href="/listar">Lista de filmes</a>
+                    <% if(usuarioLogado){%>
+                        <a class="navbar-brand" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">henry</a>                     
+                            <%}else{%>
+                                <a class="navbar-brand" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Login</a>
+                                <% } %>
                 </li>
-                <li class="nav-item">
-                    <a class="navbar-brand" href="/cadastro">Cadastro</a>
-                </li>
-                <!-- <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-              </li> -->
             </ul>
-            <span class="navbar-text">
-                Login <i class="fa-regular fa-user"></i>
-            </span>
+
         </div>
     </div>
 </nav>
-
-
