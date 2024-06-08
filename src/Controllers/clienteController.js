@@ -17,6 +17,16 @@ const { insert, remove } = require('../models/query/ClienteModel');
 
 
 const clienteController = {
+
+    index: async (req, res) => {
+        return res.render('pages/index', { usuarioLogado: false });
+    },
+
+
+    cadastro: async (req, res) => {
+        return res.render('pages/cadastro', { usuarioLogado: true });
+    },
+    
     adicionarCliente: async (req, res) => {
         try {
             const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil, especialidade } = req.body;
