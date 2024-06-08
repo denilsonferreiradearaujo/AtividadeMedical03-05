@@ -19,12 +19,13 @@ const { insert, remove } = require('../models/query/ClienteModel');
 const clienteController = {
     adicionarCliente: async (req, res) => {
         try {
-            const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil } = req.body;
+            const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil, especialidade } = req.body;
             const objPessoa = new Pessoa({ cpf, nome, data_nasc, genero, email });
-            const objLogin = new Login(login);
-            const objPerfil = new Perfil(perfil);
             const objEndereco = new Endereco(endereco);
             const objTelefones = telefone.map(tel => new Telefone(tel));
+            const objLogin = new Login(login);
+            const objPerfil = new Perfil(perfil);
+            let objEspecialidade = null;
             // console.log(funcionario);
             var objFuncionario = new Funcionario(funcionario);
             console.log(objFuncionario);
@@ -35,8 +36,14 @@ const clienteController = {
                     console.log("Erro!");
                     return res.json("Data de admissão inválida!");
                 }
+
+                if (objFuncionario.crm !== null || objFuncionario.crm !== "") {
+                    objEspecialidade = new Especialidade(especialidade);
+                }
+
             }
-            const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario, objLogin, objPerfil);
+
+            const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario, objLogin, objPerfil, objEspecialidade);
             return res.json(result);
         } catch (error) {
             console.log(error);

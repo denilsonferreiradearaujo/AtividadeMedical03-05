@@ -1,6 +1,6 @@
 class Especialidade {
 
-    constructor(pEspecialidade) {
+    constructor([pEspecialidade]) {
         this.id = (pEspecialidade.id !== null || pEspecialidade.id > 0) ? pEspecialidade.id : null;
         this.desc_especialidade = pEspecialidade.desc_especialidade;
     }

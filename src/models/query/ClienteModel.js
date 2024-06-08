@@ -1,6 +1,6 @@
 const conectarBancoDeDados = require('../../config/db');
 
-async function insert(cliente, endereco, telefone, funcionario, login, perfil) {
+async function insert(cliente, endereco, telefone, funcionario, login, perfil, especialidade) {
     const connection = await conectarBancoDeDados();
     try {
         await connection.beginTransaction();
@@ -17,7 +17,7 @@ async function insert(cliente, endereco, telefone, funcionario, login, perfil) {
 
         const resPessoa = await connection.query('INSERT INTO tbl_pessoa (cpf, nome, data_nasc, genero, email, endereco_id) VALUES (?, ?, ?, ?, ?, ?)', [cliente.cpf, cliente.nome, cliente.data_nasc, cliente.genero, cliente.email, enderecoId]);
         // console.log('RESULTADO INSERT CLIENTE =>', resPessoa);
-
+        pessoaId = resPessoa[0].insertId;
 
 
 
@@ -30,18 +30,33 @@ async function insert(cliente, endereco, telefone, funcionario, login, perfil) {
 
         for (const idTel of idsTel) {
             await connection.query('INSERT INTO tbl_pessoa_has_tbl_telefone (pessoa_id, telefone_id, pessoa_tbl_endereco_id) VALUES (?,?,?)',
-                [resPessoa[0].insertId, idTel, enderecoId]);
-            // console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, resPessoa[0].insertId);
+                [pessoaId, idTel, enderecoId]);
+            // console.log(`ID DE TELEFONES =>`, idTel, `ID DE ENDEREÇO =>`, enderecoId, `ID DE PESSOA =>`, pessoaId);
         }
 
         // Adicionar automaticamente na tabela `tbl_paciente`
-        await connection.query('INSERT INTO tbl_paciente (pessoa_id) VALUES (?)', [resPessoa[0].insertId]);
+        await connection.query('INSERT INTO tbl_paciente (pessoa_id) VALUES (?)', [pessoaId]);
         // console.log('RESULTADO INSERT PACIENTE =>', resPaciente);
+        
+        let funcionarioId = null;
         if (funcionario !== null) {
-            await connection.query('INSERT INTO tbl_funcionario (data_admissao, crm, pessoa_id, pessoa_endereco_id) VALUES (?, ?, ?, ?)', [funcionario.data_admissao, funcionario.crm, resPessoa[0].insertId, enderecoId] )
-        }
+            const resFuncionario = await connection.query('INSERT INTO tbl_funcionario (data_admissao, crm, pessoa_id, pessoa_endereco_id) VALUES (?, ?, ?, ?)', [funcionario.data_admissao, funcionario.crm, pessoaId, enderecoId])
+            funcionarioId = resFuncionario[0].insertId;
+        } 
 
-        const resLogin = await connection.query('INSERT INTO tbl_login (login, senha, status, pessoa_id, pessoa_endereco_id) VALUES ( ?, ?, ?, ?, ?)', [login.login, login.senha, login.status, resPessoa[0].insertId, enderecoId])
+        // console.log(login);
+        const resLogin = await connection.query('INSERT INTO tbl_login (login, senha, status, pessoa_id, pessoa_endereco_id) VALUES ( ?, ?, ?, ?, ?)', [login.login, login.senha, login.status, pessoaId, enderecoId])
+        const loginId = resLogin[0].insertId;
+        console.log(resLogin);
+        // console.log(perfil);
+        await connection.query('INSERT INTO tbl_perfis (tipo, login_id, login_pessoa_id, login_pessoa_endereco_id) VALUES (?, ?, ?, ?)', [perfil.tipo, loginId, pessoaId, enderecoId])
+
+        if (especialidade !== null){
+            const resEspecialidade = await connection.query('INSERT INTO tbl_especialidade (desc_especialidade) VALUES (?)', [especialidade.desc_especialidade]);
+            const especialidadeId = resEspecialidade[0].insertId;
+
+            await connection.query('INSERT INTO tbl_funcionario_has_tbl_especialidade (funcionario_id, funcionario_pessoa_id, funcionario_pessoa_endereco_id, especialidade_id) VALUES (?, ?, ?, ?)',  [funcionarioId, pessoaId, enderecoId, especialidadeId])
+        }
 
         await connection.commit();
         console.log('Transação concluída com sucesso.');
