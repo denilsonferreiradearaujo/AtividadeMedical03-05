@@ -1,5 +1,53 @@
 <body>
 
-    <H1>Projeto Medical Group</H1>
-    <img src="../../../images/cinema2.png">
+    <div class="container">
+        <div class="col">
+            <div class="name" style="font-size: 45px; color: white; font-weight: bold;" >Bem vindo ao MedicalGroup!!</div>
+            <div class="frase" style="font-size: 25px; color: white;">Atedimentos com clinico geral, especialidades e
+                exames. Solicite seu cadastro!</div>
+        </div>
+
+        <div class="container.body">
+            <img class="imagem"
+                src="../../../images/cinematic-portrait-woman-working-healthcare-system-having-care-job.jpg">
+        </div>
+    </div>
+
 </body>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Faça seu login</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group1">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group2">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <div class="modal-bottom">
+                        <button type="submit" class="bottom" onclick="redirecionarPag(event)">Login</button>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function redirecionarPag(event) {
+        event.preventDefault(); // Previne o envio padrão do formulário
+        window.location.href = 'http://localhost:3000/listar'; // Substitua 'nova_pagina.html' pelo URL desejado
+    }
+</script>

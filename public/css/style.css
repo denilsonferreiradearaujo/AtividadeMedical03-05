@@ -13,13 +13,14 @@
 }
 
 main {
-    width: 80%;
+    width: 100%;
     margin-top: 50px;
     /* color: white; */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-bottom: 3%;
 }
 
 body {
@@ -32,21 +33,26 @@ body {
 
     display: flex;
     /* flex-direction: column; */
-    justify-content: center;
+    justify-content: flex-start;
     /* align-items: center; */
     /* min-height: 100vh; */
+    background: #0475c0;
 }
 
 header {
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: white;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background: white;
-    text-align: center;
-    /* padding: 20px 0; */
+    z-index: 10;
 }
+
+
 
 footer {
     display: block;
@@ -55,10 +61,11 @@ footer {
     /* Através do atributo bottom é possível definir a posição vertical do elemento em relação a sua borda inferior. */
     bottom: 0vh;
     left: 0;
-    background: white;
+    background: #0475c0;
     text-align: center;
     /* A propriedade padding define uma a distância entre o conteúdo de um elemento e suas bordas.  */
-    padding: 20px 0;
+    padding: 2px;
+    z-index: 10;
 }
 
 header a {
@@ -84,10 +91,17 @@ header a {
     gap: 5px;
 }
 
-/* Alinhar itens em linha */
-.alinhar-em-linha {
-    flex-direction: row;
+.navbar {
+    display: flex;
+    justify-content: flex-start;
+    background: #0475c0;
+    gap: 82.5rem;
 }
+
+/* Alinhar itens em linha */
+/* .alinhar-em-linha {
+    flex-direction: row;
+} */
 
 /* Alinhar itens em colunas */
 .alinhar-em-coluna {
@@ -139,3 +153,157 @@ table tr td {
     padding: 10px;
     text-align: center;
 }
+
+/* home */
+
+.imagem {
+    display: flex;
+    margin-left: -500px;
+    margin-top: 30px;
+    width: 25rem;
+    height: 30rem;
+    border-radius: 500px;
+    border: 10px solid white;
+    box-shadow: 2px 2px 2px 2px;
+}
+
+.name {
+    display: flex;
+    padding: 1rem !important;
+    width: 30%;
+    text-align: center;
+}
+
+.frase {
+    display: flex;
+    padding: 1rem !important;
+    width: 30%;
+    text-align: center;
+}
+
+/* cadastro */
+
+.card {
+    display: flex;
+    width: 70%;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    /* Ajuste a margem superior conforme necessário */
+    z-index: 1;
+    /* Certifique-se de que o valor do z-index seja menor que o da navbar */
+}
+
+.card-header {
+    font-size: 20px;
+    text-align: center;
+}
+
+.alinhar-em-linha {
+    display: flex;
+    flex-direction: row;
+    align-content: space-around;
+    justify-content: space-around;
+}
+
+.caixa-genero {
+    height: 58px;
+    width: 292px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.caixa-estado {
+    height: 58px;
+    width: 213px;
+    background-color: #fff;
+    border-radius: 5px;
+
+}
+
+.container-botao {
+    display: flex;
+    flex-direction: row;
+    align-content: space-around;
+    justify-content: space-around;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* Oculta as setas de seleção nos campos de número */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* model login */
+.form-group1 {
+    display: flex;
+    gap: 30px;
+}
+
+.form-group2 {
+    display: flex;
+    gap: 31.2px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.modal-body {
+    display: flex;
+    position: relative;
+    padding: 50px;
+}
+
+.modal-bottom {
+    display: flex;
+    align-items: center;
+    margin-left: 55%;
+}
+
+button.bottom {
+    background-color: #0475c0;
+    color: white;
+    box-shadow: 2px, 2px, 2px, 2px;
+}
+
+.fs-5 {
+    font-size: 1.25rem !important;
+    color: #0475c0;
+}
+
+button.btn.btn-secondary {
+    background: red;
+    border: none;
+}
+
+/* minhas consultas */
+
+.h3,
+h3 {
+    font-size: 1.75rem;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+

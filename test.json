@@ -27,7 +27,7 @@
 
     "funcionario":[
         {
-            "data_admissao":"21/10/1999",
+            "data_admissao":"",
             "crm":""
         }
     ],
@@ -43,6 +43,12 @@
     "perfil": [
         {
             "tipo": "Paciente"
+        }
+    ],
+
+    "especialidade": [
+        {
+            "desc_especialidade": ""
         }
     ]
 }
