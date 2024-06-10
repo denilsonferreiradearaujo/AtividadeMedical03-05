@@ -13,7 +13,7 @@ const Telefone = require('../models/classes/Telefone');
 const Validacoes = require('../models/classes/Validacoes');
 
 // Import das funções das ClienteModel
-const { insert, remove } = require('../models/query/ClienteModel');
+const { insert, remove, agendarConsulta } = require('../models/query/ClienteModel');
 
 
 const clienteController = {
@@ -107,7 +107,28 @@ const clienteController = {
             console.log(error);
             res.json(error);
         }
-    }
+    },
+
+    agendarConsulta: async (req, res) => {
+        try {
+            const { dataAgenda, especialidade, medico, paciente } = req.body;
+
+            // Verifica se todos os campos obrigatórios estão presentes
+            if (!dataAgenda || !especialidade || !medico || !paciente) {
+                return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+            }
+
+            // Chama a função de agendamento
+            const response = await agendarConsulta({ dataAgenda, especialidade, medico, paciente });
+
+            // Envia a resposta apropriada
+            res.status(response.status).json(response);
+        } catch (error) {
+            console.log("Erro ao agendar consulta:", error);
+            res.status(500).json({ message: "Erro ao agendar consulta." });
+        }
+    },
 };
+
 
 module.exports = clienteController;
