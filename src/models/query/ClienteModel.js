@@ -206,4 +206,21 @@ async function remove(cpf) {
     }
 }
 
-module.exports = { insert, update, read, buscarCpf, remove };
+async function agendarConsulta({ dataAgenda, especialidade, medico, paciente }) {
+    const connection = await conectarBancoDeDados();
+    try {
+        // Insere os dados no banco de dados
+        await connection.query(`
+            INSERT INTO tbl_consulta (data_agenda, especialidade, medico_id, paciente_id)
+            VALUES (?, ?, ?, ?)`, [dataAgenda, especialidade, medico, paciente]);
+
+        return { status: 200, message: "Consulta agendada com sucesso!" };
+    } catch (error) {
+        console.error("Erro ao agendar consulta:", error);
+        return { status: 500, message: "Erro ao agendar consulta." };
+    } finally {
+        connection.end();
+    }
+}
+
+module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta };
