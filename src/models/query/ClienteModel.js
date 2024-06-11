@@ -206,13 +206,14 @@ async function remove(cpf) {
     }
 }
 
-async function agendarConsulta({ dataAgenda, especialidade, medico, paciente }) {
+async function agendarConsulta(consulta) {
     const connection = await conectarBancoDeDados();
     try {
         // Insere os dados no banco de dados
         await connection.query(`
-            INSERT INTO tbl_consulta (data_agenda, especialidade, medico_id, paciente_id)
-            VALUES (?, ?, ?, ?)`, [dataAgenda, especialidade, medico, paciente]);
+            INSERT INTO tbl_consulta (data, hora, status, paciente_id, paciente_pessoa_id, funcionario_id, funcionario_pessoa_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+            [consulta.data, consulta.hora, consulta.status, consulta.paciente_id, consulta.paciente_pessoa_id, consulta.funcionario_id, consulta.funcionario_pessoa_id]);
 
         return { status: 200, message: "Consulta agendada com sucesso!" };
     } catch (error) {
