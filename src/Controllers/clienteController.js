@@ -26,7 +26,7 @@ const clienteController = {
     cadastro: async (req, res) => {
         return res.render('pages/cadastro', { usuarioLogado: true });
     },
-    
+
     adicionarCliente: async (req, res) => {
         try {
             const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil, especialidade } = req.body;
@@ -111,21 +111,31 @@ const clienteController = {
 
     agendarConsulta: async (req, res) => {
         try {
-            const { dataAgenda, especialidade, medico, paciente } = req.body;
+            const { data, hora, status, paciente_id, paciente_pessoa_id, funcionario_id, funcionario_pessoa_id } = req.body;
 
             // Verifica se todos os campos obrigatórios estão presentes
-            if (!dataAgenda || !especialidade || !medico || !paciente) {
+            if (!data || !hora || !status || !paciente_id || !paciente_pessoa_id || !funcionario_id || !funcionario_pessoa_id) {
                 return res.status(400).json({ message: "Todos os campos são obrigatórios." });
             }
 
+            const consulta = new Consulta({
+                data,
+                hora,
+                status,
+                paciente_id,
+                paciente_pessoa_id,
+                funcionario_id,
+                funcionario_pessoa_id
+            });
+
             // Chama a função de agendamento
-            const response = await agendarConsulta({ dataAgenda, especialidade, medico, paciente });
+            const response = await agendarConsulta(consulta);
 
             // Envia a resposta apropriada
-            res.status(response.status).json(response);
+            return res.status(response.status).json(response);
         } catch (error) {
             console.log("Erro ao agendar consulta:", error);
-            res.status(500).json({ message: "Erro ao agendar consulta." });
+            return res.status(500).json({ message: "Erro ao agendar consulta." });
         }
     },
 };

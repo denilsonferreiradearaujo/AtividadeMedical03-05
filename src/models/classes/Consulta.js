@@ -33,9 +33,10 @@ class Consulta {
     set Funcionario_pessoa_id(value) { this.funcionario_pessoa_id = value; }
 
     DataConvert(value) {
-        let [dia, mes, ano] = value.split('/');
+        let [dia, mes, ano] = value.split('/'); 
         let dataFormatada = `${ano}-${mes}-${dia}`;
-        this.Data = dataFormatada;
+        this.Data = new Date(dataFormatada);
+        return this.Data;
     }
 }
 
