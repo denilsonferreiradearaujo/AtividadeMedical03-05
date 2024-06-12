@@ -1,6 +1,6 @@
 class Login {
 
-    constructor([pLogin]) {
+    constructor(pLogin) {
         this.id = (pLogin.id !== null || pLogin.id > 0) ? pLogin.id : null;
         this.login = pLogin.login;
         this.senha = pLogin.senha;

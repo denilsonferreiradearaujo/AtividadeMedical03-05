@@ -29,26 +29,56 @@ const clienteController = {
 
     adicionarCliente: async (req, res) => {
         try {
-            const { cpf, nome, data_nasc, genero, email, endereco, telefone, funcionario, login, perfil, especialidade } = req.body;
+
+            const { cpf, nome, data_nasc, genero, email, logradouro, bairro, estado, numero, complemento, cep, tel1, tel2, data_admissao, crm, login, senha, status, perfil, desc_especialidade } = req.body;
+            console.log(req.body);
             const objPessoa = new Pessoa({ cpf, nome, data_nasc, genero, email });
-            const objEndereco = new Endereco(endereco);
-            const objTelefones = telefone.map(tel => new Telefone(tel));
-            const objLogin = new Login(login);
-            const objPerfil = new Perfil(perfil);
+            if (data_nasc === null || data_nasc === "") {
+                return res.json("Data de nascimento inválida!");
+            } else {
+                if (objPessoa.data_nasc == "Invalid Date" || !(objPessoa.data_nasc) instanceof Date) {
+                    console.log("Erro!");
+                    return res.json("Data de nascimento inválida!");
+                }
+
+            }
+
+
+
+
+            console.log(logradouro, bairro, estado, numero, complemento,cep);
+
+
+            const objEndereco = new Endereco({id:null, logradouro:logradouro, bairro:bairro, estado:estado, numero:numero, complemento:complemento, cep:cep});
+
+console.log('HELP =>',objEndereco);
+
+            let objTelefones = [];
+            objTelefones.push(new Telefone({id:null,numero:tel1}));
+
+            if (tel2 !== null || tel2 !== '') {
+                objTelefones.push(new Telefone({id:null,numero:tel2}));
+            }
+
+
+            const objLogin = new Login({id:null, login:login, senha:senha, status:status});
+
+            const objPerfil = new Perfil({id: null, tipo:perfil});
+
             let objEspecialidade = null;
             // console.log(funcionario);
-            var objFuncionario = new Funcionario(funcionario);
-            console.log(objFuncionario);
-            if (funcionario[0].data_admissao === null || funcionario[0].data_admissao === "") {
+            var objFuncionario = new Funcionario({id: null, data_admissao : data_admissao, crm: crm});
+            console.log(objFuncionario.data_admissao);
+            if (objFuncionario.data_admissao === null || objFuncionario.data_admissao === "") {
                 objFuncionario = null;
             } else {
-                if (objFuncionario.data_admissao == "Invalid Date" || !(objFuncionario.data_admissao) instanceof Date) {
+                if (objFuncionario.data_admissao == "Invalid Date" || isNaN(Date.parse(objFuncionario.data_admissao))) {
                     console.log("Erro!");
                     return res.json("Data de admissão inválida!");
                 }
-
+                
                 if (objFuncionario.crm !== null || objFuncionario.crm !== "") {
-                    objEspecialidade = new Especialidade(especialidade);
+                    objEspecialidade = new Especialidade({id:null, desc_especialidade: desc_especialidade});
                 }
 
             }

@@ -1,6 +1,6 @@
 class Perfil {
 
-    constructor([pPerfis]) {
+    constructor(pPerfis) {
         this.id = (pPerfis.id !== null || pPerfis.id > 0) ? pPerfis.id : null;
         this.tipo = pPerfis.tipo;
         this.login_id = (pPerfis.login_id !== null || pPerfis.login_id > 0) ? pPerfis.login_id : null;

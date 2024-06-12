@@ -1,16 +1,18 @@
 class Endereco {
 
     constructor(pEnd) {
-        this.id = (pEnd[0].id !== null || pEnd[0].id > 0) ? pEnd[0].id : null;
-        this.logradouro = pEnd[0].logradouro;
-        this.bairro = pEnd[0].bairro;
-        this.estado = pEnd[0].estado;
-        this.numero = pEnd[0].numero;
-        this.complemento = pEnd[0].complemento;
-        this.cep = pEnd[0].cep;
+        
+console.log(pEnd);
+        this.id = pEnd.id !== null || pEnd.id > 0 ? pEnd.id : null;
+        this.logradouro = pEnd.logradouro;
+        this.bairro = pEnd.bairro;
+        this.estado = pEnd.estado;
+        this.numero = pEnd.numero;
+        this.complemento = pEnd.complemento;
+        this.cep = pEnd.cep;
     }
 
-    get Id() { return this.id }
+    // get Id() { return this.id }
 
     get Logradouro() { return this.logradouro; }
     set Logradouro(value) { this.logradouro = value; }
