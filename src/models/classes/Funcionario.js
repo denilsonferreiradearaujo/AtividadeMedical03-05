@@ -1,7 +1,7 @@
 const Validacoes = require('./Validacoes')
 
 class Funcionario {
-    constructor([pFun]) {
+    constructor(pFun) {
         this.id = (pFun.id !== null || pFun.id > 0) ? pFun.id : null;
         this.data_admissao = Validacoes.DataConvert(pFun.data_admissao);
         this.crm = pFun.crm;
@@ -13,9 +13,6 @@ class Funcionario {
 
     get Data_admissao() { return this.data_admissao; }
     set Data_admissao(value) { this.data_admissao =value; }
-
-    // get Data_nasc() { return this.data_nasc; }
-    // set Data_nasc(value) { this.data_nasc = value; }
 
     get Crm() { return this.crm; }
     set Crm(value) { this.crm = value }

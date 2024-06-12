@@ -30,12 +30,12 @@ class Pessoa {
 
 
 
-    DataConvert(value) {
-        let [dia, mes, ano] = value.split('/'); 
-        let dataFormatada = `${ano}-${mes}-${dia}`;
-        this.Data_nasc = new Date(dataFormatada);
-        return this.Data_nasc;
-    }
+    // DataConvert(value) {
+    //     let [dia, mes, ano] = value.split('/'); 
+    //     let dataFormatada = `${ano}-${mes}-${dia}`;
+    //     this.Data_nasc = new Date(dataFormatada);
+    //     return this.Data_nasc;
+    // }
 }
 
 module.exports = Pessoa;
