@@ -19,12 +19,16 @@ const { insert, remove, agendarConsulta } = require('../models/query/ClienteMode
 const clienteController = {
 
     index: async (req, res) => {
-        return res.render('pages/index', { usuarioLogado: false });
+        return res.render('pages/index', { usuarioLogado: true });
     },
 
 
     cadastro: async (req, res) => {
         return res.render('pages/cadastro', { usuarioLogado: true });
+    },
+
+    agendar: async (req, res) => {
+        return res.render('pages/agendarConsulta', { usuarioLogado: true });
     },
 
     adicionarCliente: async (req, res) => {

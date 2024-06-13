@@ -10,7 +10,7 @@ router.put('/cliente/:cpf', Controller.atualizarCliente);
 router.delete('/cliente/:cpf', Controller.deletarCliente);
 router.get('/clientes', Controller.exibirTodos);
 router.get('/cliente/:cpf', Controller.exibirCliente);
-router.get('/agendarConsulta', Controller.agendarConsulta);
+router.get('/agendarConsulta', Controller.agendar);
 router.post('/agendarConsulta', Controller.agendarConsulta);
 
 
