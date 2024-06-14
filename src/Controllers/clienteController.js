@@ -19,7 +19,7 @@ const { insert, remove, agendarConsulta } = require('../models/query/ClienteMode
 const clienteController = {
 
     index: async (req, res) => {
-        return res.render('pages/index', { usuarioLogado: true });
+        return res.render('pages/index', { usuarioLogado: false });
     },
 
 
@@ -29,6 +29,22 @@ const clienteController = {
 
     agendar: async (req, res) => {
         return res.render('pages/agendarConsulta', { usuarioLogado: true });
+    },
+
+    adm: async (req, res) => {
+        return res.render('pages/adm', { usuarioLogado: true });
+    },
+
+    listar: async (req, res) => {
+        return res.render('pages/listar', { usuarioLogado: true });
+    },
+
+    todosOsResultados: async (req, res) => {
+        return res.render('pages/todosOsResultados', { usuarioLogado: true });
+    },
+
+    detalhesPaciente: async (req, res) => {
+        return res.render('pages/detalhesPaciente', { usuarioLogado: true });
     },
 
     adicionarCliente: async (req, res) => {
@@ -50,28 +66,28 @@ const clienteController = {
 
 
 
-            console.log(logradouro, bairro, estado, numero, complemento,cep);
+            console.log(logradouro, bairro, estado, numero, complemento, cep);
 
 
-            const objEndereco = new Endereco({id:null, logradouro:logradouro, bairro:bairro, estado:estado, numero:numero, complemento:complemento, cep:cep});
+            const objEndereco = new Endereco({ id: null, logradouro: logradouro, bairro: bairro, estado: estado, numero: numero, complemento: complemento, cep: cep });
 
-console.log('HELP =>',objEndereco);
+            console.log('HELP =>', objEndereco);
 
             let objTelefones = [];
-            objTelefones.push(new Telefone({id:null,numero:tel1}));
+            objTelefones.push(new Telefone({ id: null, numero: tel1 }));
 
             if (tel2 !== null || tel2 !== '') {
-                objTelefones.push(new Telefone({id:null,numero:tel2}));
+                objTelefones.push(new Telefone({ id: null, numero: tel2 }));
             }
 
 
-            const objLogin = new Login({id:null, login:login, senha:senha, status:status});
+            const objLogin = new Login({ id: null, login: login, senha: senha, status: status });
 
-            const objPerfil = new Perfil({id: null, tipo:perfil});
+            const objPerfil = new Perfil({ id: null, tipo: perfil });
 
             let objEspecialidade = null;
             // console.log(funcionario);
-            var objFuncionario = new Funcionario({id: null, data_admissao : data_admissao, crm: crm});
+            var objFuncionario = new Funcionario({ id: null, data_admissao: data_admissao, crm: crm });
             console.log(objFuncionario.data_admissao);
             if (objFuncionario.data_admissao === null || objFuncionario.data_admissao === "") {
                 objFuncionario = null;
@@ -80,19 +96,24 @@ console.log('HELP =>',objEndereco);
                     console.log("Erro!");
                     return res.json("Data de admissão inválida!");
                 }
-                
+
                 if (objFuncionario.crm !== null || objFuncionario.crm !== "") {
-                    objEspecialidade = new Especialidade({id:null, desc_especialidade: desc_especialidade});
+                    objEspecialidade = new Especialidade({ id: null, desc_especialidade: desc_especialidade });
                 }
 
             }
 
             const result = await insert(objPessoa, objEndereco, objTelefones, objFuncionario, objLogin, objPerfil, objEspecialidade);
-            return res.json(result);
+
+            if (result) {
+                return res.render('pages/cadastro', { usuarioLogado: true, success: false, error: 'Erro ao cadastrar o cliente. Tente novamente.' });
+            }
+
         } catch (error) {
             console.log(error);
-            res.json(error);
+            return res.render('pages/cadastro', { usuarioLogado: true, success: false, error: 'Ocorreu um erro ao cadastrar o cliente. Tente novamente.' });
         }
+
     },
 
     atualizarCliente: async (req, res) => {

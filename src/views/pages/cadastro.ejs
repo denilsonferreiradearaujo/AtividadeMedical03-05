@@ -3,7 +3,7 @@
   <div class="card-body">
     <!-- inicio do formulário -->
     <h5 class="card-title" style="margin-top: 30px"></h5>
-    <form class="form-goup" action="/cadastro/novo" method="post">
+    <form class="form-goup" action="/cadastro" method="post">
 
       <!-- Seleção do tipo de cadastro -->
       <fieldset class="form-group">
@@ -39,7 +39,7 @@
         <!-- inserir nome -->
         <div class="container">
           <div class="form-floating mb-3 col-md-12">
-            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" required />
+            <input type="text" class="form-control" id="titulo" name="nome" placeholder="" required />
             <label for="titulo">Inserir nome completo</label>
           </div>
         </div>
@@ -55,7 +55,7 @@
           <!-- inserir nascimento -->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="date" placeholder min="0" class="form-control" id="floatingInput" name="cpf" placeholder=""
+              <input type="date" placeholder min="0" class="form-control" id="floatingInput" name="data_nasc" placeholder=""
                 required />
               <label for="floatingInput">Inserir data nascimento</label>
             </div>
@@ -82,14 +82,14 @@
           <!-- inserir crm-->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="number" min="0" class="form-control" id="floatingInput" name="cpf" placeholder="" required />
+              <input type="number" min="0" class="form-control" id="floatingInput" name="crm" placeholder="" required />
               <label for="floatingInput">Inserir CRM</label>
             </div>
           </div>
           <!-- inserir data admissão -->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="date" placeholder min="0" class="form-control" id="floatingInput" name="cpf" placeholder=""
+              <input type="date" placeholder min="0" class="form-control" id="floatingInput" name="data_admissao" placeholder=""
                 required />
               <label for="floatingInput">Inserir data admissão</label>
             </div>
@@ -108,7 +108,7 @@
 
           <!-- selecione a especialidade -->
           <div class="container">
-            <select name="especialidade" class="caixa-estado" required>
+            <select name="desc_especialidade" class="caixa-estado" required>
               <option selected>Inserir especialidade</option>
               <option value="pediatria">Pediatria</option>
               <option value="clinico">Clinico</option>
@@ -116,7 +116,6 @@
               <option value="nutricionista">Nutricionista</option>
               <option value="cardiologista">Cardiologista</option>
               <option value="ginecologista">Ginecologista</option>
-              <option value="pediatra">Pediatra</option>
               <option value="ortopedista">Ortopedista</option>
             </select>
           </div>
@@ -135,7 +134,7 @@
           <!-- inserir login-->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="email" min="0" class="form-control" id="floatingInput" name="email" placeholder=""
+              <input type="email" min="0" class="form-control" id="floatingInput" name="login" placeholder=""
                 required />
               <label for="floatingInput">Inserir e-mail de login</label>
             </div>
@@ -153,8 +152,8 @@
           <div class="container">
             <select name="status" class="caixa-estado" required>
               <option selected>Status do cadastro</option>
-              <option value="funci">Ativo</option>
-              <option value="admin">Inativo</option>
+              <option value="1">Ativo</option>
+              <option value="0">Inativo</option>
             </select>
           </div>
           <!-- fim selecione o perfil -->
@@ -173,21 +172,21 @@
           <!-- inserir telefone 01-->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="tel" class="form-control" id="floatingInput" name="ano" placeholder="" required />
+              <input type="tel" class="form-control" id="floatingInput" name="tel1" placeholder="" required />
               <label for="floatingInput">Inserir telefone principal</label>
             </div>
           </div>
           <!-- inserir telefone 02-->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="tel" class="form-control" id="floatingInput" name="ano" placeholder="" required />
+              <input type="tel" class="form-control" id="floatingInput" name="tel2" placeholder="" required />
               <label for="floatingInput">Inserir telefone recado</label>
             </div>
           </div>
           <!-- inserir e-mail -->
           <div class="container">
             <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="floatingInput" name="ano" placeholder="" required />
+              <input type="email" class="form-control" id="floatingInput" name="email" placeholder="" required />
               <label for="floatingInput">Inserir e-mail</label>
             </div>
           </div>
@@ -198,17 +197,17 @@
       <!-- dados de endereço -->
       <fieldset class="form-group">
         <legend class="col-form-label col-sm-2 pt-0" style="font-weight: bold;">Endereço</legend>
-        <!-- inserir nome lougradouro -->
+        <!-- inserir nome logradouro -->
         <div class="container">
           <div class="form-floating mb-3 col-md-12">
-            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" required />
-            <label for="titulo">Inserir lougradouro</label>
+            <input type="text" class="form-control" id="titulo" name="logradouro" placeholder="" required />
+            <label for="titulo">Inserir logradouro</label>
           </div>
         </div>
         <!-- inserir complemento -->
         <div class="container">
           <div class="form-floating mb-3 col-md-12">
-            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" />
+            <input type="text" class="form-control" id="titulo" name="complemento" placeholder="" />
             <label for="titulo">Inserir complemento</label>
           </div>
         </div>
@@ -218,7 +217,7 @@
           <!-- inicio inserir bairro -->
           <div class="container">
             <div class="form-floating mb-3 col-md-12">
-              <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" required />
+              <input type="text" class="form-control" id="titulo" name="bairro" placeholder="" required />
               <label for="titulo">Inserir bairro</label>
             </div>
           </div>
@@ -226,7 +225,7 @@
           <!-- inicio inserir cidade -->
           <div class="container">
             <div class="form-floating mb-3 col-md-12">
-              <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" required />
+              <input type="text" class="form-control" id="titulo" name="cidade" placeholder="" required />
               <label for="titulo">Inserir cidade</label>
             </div>
           </div>
@@ -235,7 +234,7 @@
           <!-- inserir numero da casa -->
           <div class="container">
             <div class="form-floating mb-3 col-md-12">
-              <input type="text" class="form-control" id="titulo" name="titulo" placeholder="" required />
+              <input type="text" class="form-control" id="titulo" name="numero" placeholder="" required />
               <label for="titulo">Inserir número residência</label>
             </div>
           </div>
@@ -243,7 +242,7 @@
           <!-- inicio inserir estado -->
           <div class="container">
             <div class="form-floating mb-3 col-md-12">
-              <select name="genero" class="caixa-estado">
+              <select name="estado" class="caixa-estado">
                 <option selected>Selecione o estado</option>
                 <option value="AC">Acre</option>
                 <option value="AL">Alagoas</option>
@@ -276,7 +275,7 @@
           <!-- inicio inserir cep -->
           <div class="container">
             <div class="form-floating mb-3 col-md-12">
-              <input type="number" min="0" class="form-control" id="titulo" name="titulo" placeholder="" required />
+              <input type="number" min="0" class="form-control" id="titulo" name="cep" placeholder="" required />
               <label for="titulo">Inserir CEP</label>
             </div>
           </div>
@@ -308,6 +307,25 @@
       <!-- fim do container-botao -->
     </form>
     <!-- fim do formulário -->
+  </div>
+</div>
+
+
+<!-- Modal de Sucesso -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Sucesso</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Cadastro realizado com sucesso!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -362,7 +380,17 @@
     toggleDadosProfissionais();
   });
 
+
+  // Script para mostrar o modal de sucesso
+  <% if (typeof success !== 'undefined' && success) { %>
+      var successModal = new bootstrap.Modal(document.getElementById('successModal'), {});
+      successModal.show();
+  <% } %>
+
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+
 </body>
 
 </html>
