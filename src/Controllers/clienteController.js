@@ -12,8 +12,9 @@ const Prontuario = require('../models/classes/Prontuario');
 const Telefone = require('../models/classes/Telefone');
 const Validacoes = require('../models/classes/Validacoes');
 
+
 // Import das funções das ClienteModel
-const { insert, remove, agendarConsulta } = require('../models/query/ClienteModel');
+const { insert, remove, agendarConsulta, buscarPerfilPorLogin } = require('../models/query/ClienteModel');
 
 
 const clienteController = {
@@ -23,28 +24,56 @@ const clienteController = {
     },
 
 
-    cadastro: async (req, res) => {
-        return res.render('pages/cadastro', { usuarioLogado: true });
-    },
+    // cadastro: async (req, res) => {
+    //     return res.render('pages/cadastro', { usuarioLogado: true });
+    // },
 
-    agendar: async (req, res) => {
-        return res.render('pages/agendarConsulta', { usuarioLogado: true });
-    },
+    // agendar: async (req, res) => {
+    //     return res.render('pages/agendarConsulta', { usuarioLogado: true });
+    // },
 
-    adm: async (req, res) => {
-        return res.render('pages/adm', { usuarioLogado: true });
-    },
+    // adm: async (req, res) => {
+    //     return res.render('pages/adm', { usuarioLogado: true });
+    // },
 
-    listar: async (req, res) => {
-        return res.render('pages/listar', { usuarioLogado: true });
-    },
+    // listar: async (req, res) => {
+    //     return res.render('pages/listar', { usuarioLogado: true });
+    // },
 
-    todosOsResultados: async (req, res) => {
-        return res.render('pages/todosOsResultados', { usuarioLogado: true });
-    },
+    // todosOsResultados: async (req, res) => {
+    //     return res.render('pages/todosOsResultados', { usuarioLogado: true });
+    // },
 
-    detalhesPaciente: async (req, res) => {
-        return res.render('pages/detalhesPaciente', { usuarioLogado: true });
+    // detalhesPaciente: async (req, res) => {
+    //     return res.render('pages/detalhesPaciente', { usuarioLogado: true });
+    // },
+
+    login: async (req, res) => {
+        try {
+            const { login, senha } = req.body;
+    
+            // Verifica o tipo de perfil com base no login e senha
+            const tipoPerfil = await buscarPerfilPorLogin(login, senha);
+    
+            if (!tipoPerfil) {
+                return res.render('pages/index', { usuarioLogado: false, error: 'Login ou senha inválidos!' });
+            }
+    
+            // Redirecionar com base no tipo de perfil
+            switch (tipoPerfil.toLowerCase()) { // Converte para minúsculas para garantir correspondência correta
+                case 'paciente':
+                    return res.redirect('/listar'); // Redireciona para a página listar
+                case 'medico':
+                    return res.redirect('/todosOsResultados'); // Redireciona para a página todosOsResultados
+                case 'funcionario':
+                    return res.redirect('/adm'); // Redireciona para a página adm
+                default:
+                    throw new Error('Tipo de perfil desconhecido!');
+            }
+        } catch (error) {
+            console.log(error);
+            return res.render('pages/index', { usuarioLogado: false, error: 'Erro ao fazer login. Tente novamente.' });
+        }
     },
 
     adicionarCliente: async (req, res) => {

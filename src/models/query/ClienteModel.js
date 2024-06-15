@@ -224,4 +224,27 @@ async function agendarConsulta(consulta) {
     }
 }
 
-module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta };
+async function buscarPerfilPorLogin(login, senha) {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT p.tipo
+            FROM tbl_perfis p
+            JOIN tbl_login l ON p.login_id = l.id
+            WHERE l.login = ? AND l.senha = ?
+        `, [login, senha]);
+
+        if (rows.length === 0) {
+            throw new Error('Login ou senha inválidos!');
+        }
+
+        return rows[0].tipo;
+    } catch (error) {
+        console.log(error.message);
+        return null;
+    } finally {
+        connection.end();
+    }
+}
+
+module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta, buscarPerfilPorLogin };
