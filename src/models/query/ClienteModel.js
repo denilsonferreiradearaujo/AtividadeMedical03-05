@@ -224,4 +224,59 @@ async function agendarConsulta(consulta) {
     }
 }
 
-module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta };
+async function buscarPerfilPorLogin(login, senha) {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT p.tipo
+            FROM tbl_perfis p
+            JOIN tbl_login l ON p.login_id = l.id
+            WHERE l.login = ? AND l.senha = ?
+        `, [login, senha]);
+
+        if (rows.length === 0) {
+            throw new Error('Login ou senha inválidos!');
+        }
+
+        return rows[0].tipo;
+    } catch (error) {
+        console.log(error.message);
+        return null;
+    } finally {
+        connection.end();
+    }
+}
+
+async function getPacientesComConsultas() {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT
+                c.status,
+                c.data,
+                c.hora,
+                e.desc_especialidade AS especialidade,
+                p.nome AS medico
+            FROM
+                tbl_consulta c
+            JOIN
+                tbl_funcionario f ON c.funcionario_id = f.id
+            JOIN
+                tbl_pessoa p ON f.pessoa_id = p.id
+            JOIN
+                tbl_funcionario_has_tbl_especialidade fe ON f.id = fe.funcionario_id
+            JOIN
+                tbl_especialidade e ON fe.especialidade_id = e.id
+            ORDER BY
+                c.data, c.hora;
+        `);
+        return rows;
+    } catch (error) {
+        console.error("Erro ao buscar pacientes com consultas:", error.message);
+        return [];
+    } finally {
+        connection.end();
+    }
+}
+
+module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta, buscarPerfilPorLogin, getPacientesComConsultas };

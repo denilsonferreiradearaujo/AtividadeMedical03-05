@@ -12,9 +12,13 @@ const Prontuario = require('../models/classes/Prontuario');
 const Telefone = require('../models/classes/Telefone');
 const Validacoes = require('../models/classes/Validacoes');
 
-// Import das funções das ClienteModel
-const { insert, remove, agendarConsulta } = require('../models/query/ClienteModel');
 
+// Import das funções das ClienteModel
+const { insert, remove, agendarConsulta, buscarPerfilPorLogin, getPacientesComConsultas } = require('../models/query/ClienteModel');
+
+function removerAcentos(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
 const clienteController = {
 
@@ -23,29 +27,63 @@ const clienteController = {
     },
 
 
-    cadastro: async (req, res) => {
-        return res.render('pages/cadastro', { usuarioLogado: true });
+    // cadastro: async (req, res) => {
+    //     return res.render('pages/cadastro', { usuarioLogado: true });
+    // },
+
+    // agendar: async (req, res) => {
+    //     return res.render('pages/agendarConsulta', { usuarioLogado: true });
+    // },
+
+    // adm: async (req, res) => {
+    //     return res.render('pages/adm', { usuarioLogado: true });
+    // },
+
+    // listar: async (req, res) => {
+    //     return res.render('pages/listar', { usuarioLogado: true });
+    // },
+
+    // todosOsResultados: async (req, res) => {
+    //     return res.render('pages/todosOsResultados', { usuarioLogado: true });
+    // },
+
+    // detalhesPaciente: async (req, res) => {
+    //     return res.render('pages/detalhesPaciente', { usuarioLogado: true });
+    // },
+
+    // Função para remover acentos de caracteres
+
+    login: async (req, res) => {
+        try {
+            const { login, senha } = req.body;
+
+            // Verifica o tipo de perfil com base no login e senha
+            const tipoPerfil = await buscarPerfilPorLogin(login, senha);
+
+            if (!tipoPerfil) {
+                return res.render('pages/index', { usuarioLogado: false, error: 'Login ou senha inválidos!' });
+            }
+
+            // Normaliza o tipo de perfil para lowercase e remove acentos para evitar problemas de comparação
+            const tipoPerfilNormalizado = removerAcentos(tipoPerfil.toLowerCase());
+
+            // Redirecionar com base no tipo de perfil
+            switch (tipoPerfilNormalizado) {
+                case 'paciente':
+                    return res.render('pages/listar', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
+                case 'medico':
+                    return res.render('pages/todosOsResultados', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
+                case 'funcionario':
+                    return res.render('pages/adm', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
+                default:
+                    throw new Error('Tipo de perfil desconhecido!');
+            }
+        } catch (error) {
+            console.log(error);
+            return res.render('pages/index', { usuarioLogado: false, error: 'Erro ao fazer login. Tente novamente.' });
+        }
     },
 
-    agendar: async (req, res) => {
-        return res.render('pages/agendarConsulta', { usuarioLogado: true });
-    },
-
-    adm: async (req, res) => {
-        return res.render('pages/adm', { usuarioLogado: true });
-    },
-
-    listar: async (req, res) => {
-        return res.render('pages/listar', { usuarioLogado: true });
-    },
-
-    todosOsResultados: async (req, res) => {
-        return res.render('pages/todosOsResultados', { usuarioLogado: true });
-    },
-
-    detalhesPaciente: async (req, res) => {
-        return res.render('pages/detalhesPaciente', { usuarioLogado: true });
-    },
 
     adicionarCliente: async (req, res) => {
         try {
@@ -191,6 +229,17 @@ const clienteController = {
         } catch (error) {
             console.log("Erro ao agendar consulta:", error);
             return res.status(500).json({ message: "Erro ao agendar consulta." });
+        }
+    },
+
+    listarPacientesComConsultas: async (req, res) => {
+        try {
+            const consultas = await getPacientesComConsultas();
+            // Certifique-se de que o nome da variável "consultas" está correto aqui.
+            res.render('pages/listar', { consultas });
+        } catch (error) {
+            console.error("Erro ao listar pacientes com consultas:", error.message);
+            res.status(500).send("Erro ao listar pacientes com consultas.");
         }
     },
 };
