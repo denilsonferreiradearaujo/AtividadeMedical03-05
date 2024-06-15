@@ -16,6 +16,9 @@ const Validacoes = require('../models/classes/Validacoes');
 // Import das funções das ClienteModel
 const { insert, remove, agendarConsulta, buscarPerfilPorLogin } = require('../models/query/ClienteModel');
 
+function removerAcentos(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
 const clienteController = {
 
@@ -48,25 +51,30 @@ const clienteController = {
     //     return res.render('pages/detalhesPaciente', { usuarioLogado: true });
     // },
 
+    // Função para remover acentos de caracteres
+
     login: async (req, res) => {
         try {
             const { login, senha } = req.body;
-    
+
             // Verifica o tipo de perfil com base no login e senha
             const tipoPerfil = await buscarPerfilPorLogin(login, senha);
-    
+
             if (!tipoPerfil) {
                 return res.render('pages/index', { usuarioLogado: false, error: 'Login ou senha inválidos!' });
             }
-    
+
+            // Normaliza o tipo de perfil para lowercase e remove acentos para evitar problemas de comparação
+            const tipoPerfilNormalizado = removerAcentos(tipoPerfil.toLowerCase());
+
             // Redirecionar com base no tipo de perfil
-            switch (tipoPerfil.toLowerCase()) { // Converte para minúsculas para garantir correspondência correta
+            switch (tipoPerfilNormalizado) {
                 case 'paciente':
-                    return res.redirect('/listar'); // Redireciona para a página listar
+                    return res.render('pages/listar', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
                 case 'medico':
-                    return res.redirect('/todosOsResultados'); // Redireciona para a página todosOsResultados
+                    return res.render('pages/todosOsResultados', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
                 case 'funcionario':
-                    return res.redirect('/adm'); // Redireciona para a página adm
+                    return res.render('pages/adm', { usuarioLogado: true }); // Exemplo de passagem de usuarioLogado
                 default:
                     throw new Error('Tipo de perfil desconhecido!');
             }
@@ -75,6 +83,7 @@ const clienteController = {
             return res.render('pages/index', { usuarioLogado: false, error: 'Erro ao fazer login. Tente novamente.' });
         }
     },
+
 
     adicionarCliente: async (req, res) => {
         try {
