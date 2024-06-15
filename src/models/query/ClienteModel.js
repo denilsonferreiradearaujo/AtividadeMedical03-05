@@ -247,4 +247,36 @@ async function buscarPerfilPorLogin(login, senha) {
     }
 }
 
-module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta, buscarPerfilPorLogin };
+async function getPacientesComConsultas() {
+    const connection = await conectarBancoDeDados();
+    try {
+        const [rows] = await connection.query(`
+            SELECT
+                c.status,
+                c.data,
+                c.hora,
+                e.desc_especialidade AS especialidade,
+                p.nome AS medico
+            FROM
+                tbl_consulta c
+            JOIN
+                tbl_funcionario f ON c.funcionario_id = f.id
+            JOIN
+                tbl_pessoa p ON f.pessoa_id = p.id
+            JOIN
+                tbl_funcionario_has_tbl_especialidade fe ON f.id = fe.funcionario_id
+            JOIN
+                tbl_especialidade e ON fe.especialidade_id = e.id
+            ORDER BY
+                c.data, c.hora;
+        `);
+        return rows;
+    } catch (error) {
+        console.error("Erro ao buscar pacientes com consultas:", error.message);
+        return [];
+    } finally {
+        connection.end();
+    }
+}
+
+module.exports = { insert, update, read, buscarCpf, remove, agendarConsulta, buscarPerfilPorLogin, getPacientesComConsultas };

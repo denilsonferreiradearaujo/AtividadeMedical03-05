@@ -14,7 +14,7 @@ const Validacoes = require('../models/classes/Validacoes');
 
 
 // Import das funções das ClienteModel
-const { insert, remove, agendarConsulta, buscarPerfilPorLogin } = require('../models/query/ClienteModel');
+const { insert, remove, agendarConsulta, buscarPerfilPorLogin, getPacientesComConsultas } = require('../models/query/ClienteModel');
 
 function removerAcentos(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -229,6 +229,17 @@ const clienteController = {
         } catch (error) {
             console.log("Erro ao agendar consulta:", error);
             return res.status(500).json({ message: "Erro ao agendar consulta." });
+        }
+    },
+
+    listarPacientesComConsultas: async (req, res) => {
+        try {
+            const consultas = await getPacientesComConsultas();
+            // Certifique-se de que o nome da variável "consultas" está correto aqui.
+            res.render('pages/listar', { consultas });
+        } catch (error) {
+            console.error("Erro ao listar pacientes com consultas:", error.message);
+            res.status(500).send("Erro ao listar pacientes com consultas.");
         }
     },
 };

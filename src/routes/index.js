@@ -28,6 +28,8 @@ router.delete('/cliente/:cpf', Controller.deletarCliente);
 //     res.render('pages/todosOsResultados', { usuarioLogado: true });
 // });
 
+// router.get('/listar', Controller.listarPacientesComConsultas); DESCOMENTAR QUANDO FUNCIONAR
+
 
 router.use(function(req, res){
     res.status(404).render(`pages/pag_erro`, { message: '404 - Página não encontrada' });
